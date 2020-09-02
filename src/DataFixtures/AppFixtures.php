@@ -16,7 +16,7 @@ class AppFixtures extends Fixture
             'memory' => '32',
             'color' => 'Noir',
             'price' => 379.9,
-            'stock' => 0
+            'stock' => 0,
         ],
         [
             'brand' => 'Apple',
@@ -25,7 +25,7 @@ class AppFixtures extends Fixture
             'memory' => '64',
             'color' => 'Noir',
             'price' => 489.90,
-            'stock' => 10
+            'stock' => 10,
         ],
         [
             'brand' => 'Apple',
@@ -34,7 +34,7 @@ class AppFixtures extends Fixture
             'memory' => '64',
             'color' => 'Noir',
             'price' => 679.90,
-            'stock' => 2
+            'stock' => 2,
         ],
         [
             'brand' => 'Apple',
@@ -43,7 +43,7 @@ class AppFixtures extends Fixture
             'memory' => '128',
             'color' => 'Gold',
             'price' => 849.90,
-            'stock' => 25
+            'stock' => 25,
         ],
         [
             'brand' => 'Apple',
@@ -52,7 +52,7 @@ class AppFixtures extends Fixture
             'memory' => '512',
             'color' => 'Argent',
             'price' => 1559.90,
-            'stock' => 8
+            'stock' => 8,
         ],
         [
             'brand' => 'Samsung',
@@ -61,7 +61,7 @@ class AppFixtures extends Fixture
             'memory' => '128',
             'color' => 'Noir',
             'price' => 619.90,
-            'stock' => 10
+            'stock' => 10,
         ],
         [
             'brand' => 'Samsung',
@@ -70,7 +70,7 @@ class AppFixtures extends Fixture
             'memory' => '128',
             'color' => 'Gris',
             'price' => 759.90,
-            'stock' => 15
+            'stock' => 15,
         ],
         [
             'brand' => 'Samsung',
@@ -79,7 +79,7 @@ class AppFixtures extends Fixture
             'memory' => '128',
             'color' => 'Bleu',
             'price' => 859.90,
-            'stock' => 3
+            'stock' => 3,
         ],
         [
             'brand' => 'Samsung',
@@ -88,7 +88,7 @@ class AppFixtures extends Fixture
             'memory' => '128',
             'color' => 'noir cosmos',
             'price' => 899.90,
-            'stock' => 6
+            'stock' => 6,
         ],
         [
             'brand' => 'Samsung',
@@ -97,8 +97,8 @@ class AppFixtures extends Fixture
             'memory' => '128',
             'color' => 'Blanc',
             'price' => 1259.90,
-            'stock' => 1
-        ]
+            'stock' => 1,
+        ],
     ];
 
     public function load(ObjectManager $manager)

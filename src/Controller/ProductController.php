@@ -21,7 +21,7 @@ class ProductController extends AbstractController
      * @param Request $request
      * @return JsonResponse
      */
-    public function list(ProductRepository $productRepository, Request $request) : JsonResponse
+    public function list(ProductRepository $productRepository, Request $request): JsonResponse
     {
         $page = $request->query->get('page', 1);
         $adapter = new QueryAdapter($productRepository->findAllProducts(), false);
@@ -30,6 +30,7 @@ class ProductController extends AbstractController
 
         try {
             $pager->setCurrentPage($page);
+
             return $this->jsonPager($pager);
         } catch (OutOfRangeCurrentPageException $exception) {
             return $this->json('Page doesn\'t exist', 404);
@@ -38,11 +39,12 @@ class ProductController extends AbstractController
 
     /**
      * @Route("/api/product/{id}", name="product_show", methods={"GET"})
+     *
      * @param ProductRepository $productRepository
      * @param $id
      * @return JsonResponse
      */
-    public function show(ProductRepository $productRepository, $id) : JsonResponse
+    public function show(ProductRepository $productRepository, $id): JsonResponse
     {
         return $this->json($productRepository->find($id), 200, []);
     }

@@ -19,15 +19,15 @@ class ProductRepository extends ServiceEntityRepository
         parent::__construct($registry, Product::class);
     }
 
-   public function findAllProducts()
-   {
-       $qb = $this->createQueryBuilder('p');
+    public function findAllProducts()
+    {
+        $qb = $this->createQueryBuilder('p');
 
-       $qb
+        $qb
            ->select('p')
            ->orderBy('p.id', 'ASC')
        ;
 
-       return $qb;
-   }
+        return $qb;
+    }
 }
