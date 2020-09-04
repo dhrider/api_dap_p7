@@ -17,6 +17,7 @@ class ProductController extends AbstractController
 
     /**
      * @Route("/api/products", name="products_list", methods={"GET"})
+     *
      * @param ProductRepository $productRepository
      * @param Request $request
      * @return JsonResponse
