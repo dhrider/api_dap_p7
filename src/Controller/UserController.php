@@ -2,9 +2,9 @@
 
 namespace App\Controller;
 
-use App\Entity\Client;
 use App\Entity\User;
 use App\Repository\ClientRepository;
+use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -35,6 +35,7 @@ class UserController extends AbstractController
         $user->setFirstName($donnees->firstName);
         $user->setLastName($donnees->lastName);
         $user->setEmail($donnees->email);
+        $user->setRoles(['ROLE_USER']);
         $hash = $encoder
             ->getEncoder($user)
             ->encodePassword($donnees->password, $user->getSalt())
@@ -45,6 +46,18 @@ class UserController extends AbstractController
         $em->persist($user);
         $em->flush();
 
-        return new JsonResponse('ok', 201);
+        return new JsonResponse('L\'User a bien été crée !', 201);
     }
+
+    /**
+     * @Route("api/users", name="users_list", methods={"GET"})
+     * @param UserRepository $userRepository
+     * @return JsonResponse
+     */
+    public function list(UserRepository $userRepository)
+    {
+        return $this->json($userRepository->findAll(), 200,[], ['groups' => 'user:list']);
+    }
+
+
 }
