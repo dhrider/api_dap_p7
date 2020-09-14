@@ -22,25 +22,25 @@ class Client
 
     /**
      * @ORM\Column(type="string", length=50)
-     * @Groups("user:list")
+     * @Groups({"user"})
      */
     private $name;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups("user:list")
+     * @Groups({"user"})
      */
     private $address;
 
     /**
      * @ORM\Column(type="integer")
-     * @Groups("user:list")
+     * @Groups({"user"})
      */
     private $postalCode;
 
     /**
      * @ORM\Column(type="string", length=100)
-     * @Groups("user:list")
+     * @Groups({"user"})
      */
     private $city;
 

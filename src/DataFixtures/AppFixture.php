@@ -2,11 +2,14 @@
 
 namespace App\DataFixtures;
 
+use App\Entity\Client;
 use App\Entity\Product;
+use App\Entity\User;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
+use Symfony\Component\Security\Core\Encoder\EncoderFactoryInterface;
 
-class ProductFixtures extends Fixture
+class AppFixture extends Fixture
 {
     private $products = [
         [
@@ -101,6 +104,13 @@ class ProductFixtures extends Fixture
         ],
     ];
 
+    private $encoder;
+
+    public function __construct(EncoderFactoryInterface $encoder)
+    {
+        $this->encoder = $encoder;
+    }
+
     public function load(ObjectManager $manager)
     {
         foreach ($this->products as $product) {
@@ -116,6 +126,27 @@ class ProductFixtures extends Fixture
             $mobile->setUpdatedAt(new \DateTime());
             $manager->persist($mobile);
         }
+
+        $client = new Client();
+        $client->setName('Telefon');
+        $client->setAddress('10 rue de la Box');
+        $client->setPostalCode(75000);
+        $client->setCity('Paris');
+        $manager->persist($client);
+
+        $user = new User();
+        $user->setFirstName('john');
+        $user->setLastName('doe');
+        $user->setEmail('johndoe@test.com');
+        $user->setRoles(['ROLE_USER', 'ROLE_ADMIN']);
+        $hash = $this->encoder
+            ->getEncoder($user)
+            ->encodePassword('admin', $user->getSalt())
+        ;
+        $user->setPassword($hash);
+        $user->setClient($client);
+
+        $manager->persist($user);
 
         $manager->flush();
     }

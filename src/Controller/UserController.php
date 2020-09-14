@@ -9,8 +9,12 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Encoder\EncoderFactoryInterface;
+use Symfony\Component\Serializer\SerializerInterface;
+use Symfony\Component\Validator\ConstraintViolation;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class UserController extends AbstractController
 {
@@ -20,25 +24,45 @@ class UserController extends AbstractController
      * @param EncoderFactoryInterface $encoder
      * @param EntityManagerInterface $em
      * @param ClientRepository $clientRepository
-     * @return JsonResponse
+     * @param ValidatorInterface $validator
+     * @param SerializerInterface $serializer
+     * @return Response
      */
     public function create(
         Request $request,
         EncoderFactoryInterface $encoder,
         EntityManagerInterface $em,
-        ClientRepository $clientRepository): JsonResponse
+        ClientRepository $clientRepository,
+        ValidatorInterface $validator,
+        SerializerInterface $serializer): Response
     {
-        $user = new User();
+        $data = $request->getContent();
+        $user = $serializer->deserialize($data, User::class, 'json');
+        $violations = $validator->validate($user);
 
-        $donnees = json_decode($request->getContent());
+        $donnees = json_decode($request->getContent(), true);
+        $client = $clientRepository->find($donnees['client_id']);
 
-        $user->setFirstName($donnees->firstName);
-        $user->setLastName($donnees->lastName);
-        $user->setEmail($donnees->email);
+        if($client === null /*|| $this->getUser()->getClient()->getId() !== $client->getId()*/) {
+            $violations->add(
+                new ConstraintViolation(
+                    'Client does not exist !',
+                    null,[],
+                    'user',
+                    'client_id',
+                    $donnees['client_id']
+                )
+            );
+        }
+
+        if(count($violations) > 0) {
+            return new Response($serializer->serialize($violations, 'json'), 400, ['Content-Type' => 'application/json']);
+        }
+
         $user->setRoles(['ROLE_USER']);
         $hash = $encoder
             ->getEncoder($user)
-            ->encodePassword($donnees->password, $user->getSalt())
+            ->encodePassword($donnees['password'], $user->getSalt())
         ;
         $user->setPassword($hash);
         $user->setClient($clientRepository->find(1));
@@ -46,7 +70,7 @@ class UserController extends AbstractController
         $em->persist($user);
         $em->flush();
 
-        return new JsonResponse('L\'User a bien été crée !', 201);
+        return new JsonResponse('L\'user a bien été crée !', 201);
     }
 
     /**
@@ -54,10 +78,19 @@ class UserController extends AbstractController
      * @param UserRepository $userRepository
      * @return JsonResponse
      */
-    public function list(UserRepository $userRepository)
+    public function list(UserRepository $userRepository) : JsonResponse
     {
-        return $this->json($userRepository->findAll(), 200,[], ['groups' => 'user:list']);
+        return $this->json($userRepository->findAll(), 200,[], ['groups' => ['user']]);
     }
 
-
+    /**
+     * @Route("api/users/{id}",name="users_show", methods={"GET"})
+     * @param UserRepository $userRepository
+     * @param $id
+     * @return JsonResponse
+     */
+    public function show(UserRepository $userRepository, $id) : JsonResponse
+    {
+        return $this->json($userRepository->find($id), 200, [], ['groups' => ['user']]);
+    }
 }

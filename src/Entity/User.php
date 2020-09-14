@@ -4,12 +4,14 @@ namespace App\Entity;
 
 use App\Repository\UserRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * @ORM\Entity(repositoryClass=UserRepository::class)
+ * @UniqueEntity("email")
  */
 class User implements UserInterface
 {
@@ -23,8 +25,8 @@ class User implements UserInterface
     /**
      * @ORM\Column(type="string", length=180, unique=true)
      * @Assert\NotBlank()
-     * @Assert\Unique()
-     * @Groups("user:list")
+     * @Assert\Email()
+     * @Groups({"user"})
      */
     private $email;
 
@@ -42,20 +44,21 @@ class User implements UserInterface
 
     /**
      * @ORM\ManyToOne(targetEntity=Client::class, inversedBy="users")
+     * @Groups({"user"})
      */
     private $client;
 
     /**
      * @ORM\Column(type="string", length=10)
      * @Assert\NotBlank()
-     * @Groups("user:list")
+     * @Groups({"user"})
      */
     private $firstName;
 
     /**
      * @ORM\Column(type="string", length=15)
      * @Assert\NotBlank()
-     * @Groups("user:list")
+     * @Groups({"user"})
      */
     private $lastName;
 
