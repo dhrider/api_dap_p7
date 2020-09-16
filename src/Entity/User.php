@@ -4,14 +4,33 @@ namespace App\Entity;
 
 use App\Repository\UserRepository;
 use Doctrine\ORM\Mapping as ORM;
+use JMS\Serializer\Annotation as Serializer;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Hateoas\Configuration\Annotation as Hateoas;
 
 /**
  * @ORM\Entity(repositoryClass=UserRepository::class)
  * @UniqueEntity("email")
+ * @Hateoas\Relation(
+ *      "self",
+ *      href = @Hateoas\Route(
+ *          "users_show",
+ *          parameters = { "id" = "expr(object.getId())" },
+ *          absolute = true
+ *      )
+ * )
+ * @Hateoas\Relation(
+ *      "delete",
+ *      href = @Hateoas\Route(
+ *          "users_delete",
+ *          parameters = { "id" = "expr(object.getId())" },
+ *          absolute = true
+ *      )
+ * )
+ * @Serializer\ExclusionPolicy("all")
  */
 class User implements UserInterface
 {
@@ -19,7 +38,7 @@ class User implements UserInterface
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"user"})
+     * @Serializer\Expose()
      */
     private $id;
 
@@ -27,7 +46,7 @@ class User implements UserInterface
      * @ORM\Column(type="string", length=180, unique=true)
      * @Assert\NotBlank()
      * @Assert\Email()
-     * @Groups({"user"})
+     * @Serializer\Expose()
      */
     private $email;
 
@@ -46,22 +65,21 @@ class User implements UserInterface
     /**
      * @ORM\Column(type="string", length=10)
      * @Assert\NotBlank()
-     * @Groups({"user"})
+     * @Serializer\Expose()
      */
     private $firstName;
 
     /**
      * @ORM\Column(type="string", length=15)
      * @Assert\NotBlank()
-     * @Groups({"user"})
+     * @Serializer\Expose()
      */
-
     private $lastName;
+
     /**
      * @ORM\ManyToOne(targetEntity=Client::class, inversedBy="users")
-     * @Groups({"user"})
+     * @Serializer\Expose()
      */
-
     private $client;
 
     /**

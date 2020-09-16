@@ -93,7 +93,7 @@ class UserController extends AbstractController
      */
     public function list() : JsonResponse
     {
-        return $this->json($this->userRepository->findAll(), 200,[], ['groups' => ['user']]);
+        return $this->json($this->userRepository->findAll(), 200,[]);
     }
 
     /**
@@ -103,15 +103,8 @@ class UserController extends AbstractController
      */
     public function show($id) : JsonResponse
     {
-        return $this->json($this->userRepository->find($id), 200, [], ['groups' => ['user']]);
-    }
-
-    /**
-     * @Route("api/users/{id}", name="users_update", methods={"PUT"})
-     */
-    public function update()
-    {
-
+        $json = $this->serializer->serialize($this->userRepository->find($id), 'json');
+        return New JsonResponse($json, 200, ['Content-Type' => 'application/json'], true);
     }
 
     /**
