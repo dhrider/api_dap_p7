@@ -19,7 +19,6 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class UserController extends AbstractController
 {
-
     private $serializer;
     private $userRepository;
     private $entityManager;
@@ -110,7 +109,6 @@ class UserController extends AbstractController
         } catch (NotAcceptableException $exception) {
             return new JsonResponse('L\'user n\'existe pas !', 404);
         }
-
     }
 
     /**
@@ -123,7 +121,6 @@ class UserController extends AbstractController
     {
         $user = $userRepository->find($id);
 
-
         if($user !== null) {
             $this->entityManager->remove($user);
             $this->entityManager->flush();
@@ -132,6 +129,5 @@ class UserController extends AbstractController
         } else {
             return new JsonResponse('L\'user n\'existe pas !', 404);
         }
-
     }
 }

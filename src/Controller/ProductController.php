@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Repository\ProductRepository;
+use JMS\Serializer\Exception\NotAcceptableException;
 use JMS\Serializer\SerializerInterface;
 use Pagerfanta\Doctrine\ORM\QueryAdapter;
 use Pagerfanta\Exception\OutOfRangeCurrentPageException;
@@ -35,7 +36,7 @@ class ProductController extends AbstractController
 
             return $this->jsonPager($pager);
         } catch (OutOfRangeCurrentPageException $exception) {
-            return $this->json('Page doesn\'t exist', 404);
+            return $this->json('La page n\'existe pas !', 404);
         }
     }
 
@@ -49,7 +50,11 @@ class ProductController extends AbstractController
      */
     public function show(ProductRepository $productRepository, $id, SerializerInterface $serializer): JsonResponse
     {
-        $json = $serializer->serialize($productRepository->find($id), 'json');
-        return New JsonResponse($json, 200, ['Content-Type' => 'application/json'], true);
+        try {
+            $json = $serializer->serialize($productRepository->find($id), 'json');
+            return New JsonResponse($json, 200, ['Content-Type' => 'application/json'], true);
+        } catch (NotAcceptableException $exception) {
+            return new JsonResponse('Le produit n\'existe pas !', 404);
+        }
     }
 }
