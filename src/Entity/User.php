@@ -38,6 +38,7 @@ class User implements UserInterface
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
+     * @Groups({"user"})
      * @Serializer\Expose()
      */
     private $id;
@@ -46,6 +47,7 @@ class User implements UserInterface
      * @ORM\Column(type="string", length=180, unique=true)
      * @Assert\NotBlank()
      * @Assert\Email()
+     * @Groups({"user"})
      * @Serializer\Expose()
      */
     private $email;
@@ -65,6 +67,7 @@ class User implements UserInterface
     /**
      * @ORM\Column(type="string", length=10)
      * @Assert\NotBlank()
+     * @Groups({"user"})
      * @Serializer\Expose()
      */
     private $firstName;
@@ -72,12 +75,14 @@ class User implements UserInterface
     /**
      * @ORM\Column(type="string", length=15)
      * @Assert\NotBlank()
+     * @Groups({"user"})
      * @Serializer\Expose()
      */
     private $lastName;
 
     /**
      * @ORM\ManyToOne(targetEntity=Client::class, inversedBy="users")
+     * @Groups({"user"})
      * @Serializer\Expose()
      */
     private $client;

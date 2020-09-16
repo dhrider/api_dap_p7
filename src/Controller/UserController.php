@@ -6,6 +6,7 @@ use App\Entity\User;
 use App\Repository\ClientRepository;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use JMS\Serializer\Exception\NotAcceptableException;
 use JMS\Serializer\SerializerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -93,7 +94,7 @@ class UserController extends AbstractController
      */
     public function list() : JsonResponse
     {
-        return $this->json($this->userRepository->findAll(), 200,[]);
+        return $this->json($this->userRepository->findAll(), 200,[], ['groups' => ['user']]);
     }
 
     /**
@@ -103,8 +104,13 @@ class UserController extends AbstractController
      */
     public function show($id) : JsonResponse
     {
-        $json = $this->serializer->serialize($this->userRepository->find($id), 'json');
-        return New JsonResponse($json, 200, ['Content-Type' => 'application/json'], true);
+        try {
+            $json = $this->serializer->serialize($this->userRepository->find($id), 'json');
+            return New JsonResponse($json, 200, ['Content-Type' => 'application/json'], true);
+        } catch (NotAcceptableException $exception) {
+            return new JsonResponse('L\'user n\'existe pas !', 404);
+        }
+
     }
 
     /**
@@ -115,9 +121,17 @@ class UserController extends AbstractController
      */
     public function delete(UserRepository $userRepository, $id) : JsonResponse
     {
-        $this->entityManager->remove($userRepository->find($id));
-        $this->entityManager->flush();
+        $user = $userRepository->find($id);
 
-        return new JsonResponse('L\'user a bien été supprimé !', 201);
+
+        if($user !== null) {
+            $this->entityManager->remove($user);
+            $this->entityManager->flush();
+
+            return new JsonResponse('L\'user a bien été supprimé !', 201);
+        } else {
+            return new JsonResponse('L\'user n\'existe pas !', 404);
+        }
+
     }
 }
