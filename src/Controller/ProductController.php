@@ -3,12 +3,14 @@
 namespace App\Controller;
 
 use App\Repository\ProductRepository;
+use JMS\Serializer\SerializerInterface;
 use Pagerfanta\Doctrine\ORM\QueryAdapter;
 use Pagerfanta\Exception\OutOfRangeCurrentPageException;
 use Pagerfanta\Pagerfanta;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 class ProductController extends AbstractController
@@ -43,10 +45,12 @@ class ProductController extends AbstractController
      *
      * @param ProductRepository $productRepository
      * @param $id
+     * @param SerializerInterface $serializer
      * @return JsonResponse
      */
-    public function show(ProductRepository $productRepository, $id): JsonResponse
+    public function show(ProductRepository $productRepository, $id, SerializerInterface $serializer): JsonResponse
     {
-        return $this->json($productRepository->find($id), 200, []);
+        $json = $serializer->serialize($productRepository->find($id), 'json');
+        return New JsonResponse($json, 200, ['Content-Type' => 'application/json'], true);
     }
 }
