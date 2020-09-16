@@ -6,38 +6,52 @@ use App\Entity\User;
 use App\Repository\ClientRepository;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use JMS\Serializer\SerializerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Encoder\EncoderFactoryInterface;
-use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Validator\ConstraintViolation;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class UserController extends AbstractController
 {
+
+    private $serializer;
+    private $userRepository;
+    private $entityManager;
+
+    /**
+     * UserController constructor.
+     * @param SerializerInterface $serializer
+     * @param UserRepository $userRepository
+     * @param EntityManagerInterface $entityManager
+     */
+    public function __construct(SerializerInterface $serializer, UserRepository  $userRepository, EntityManagerInterface $entityManager)
+    {
+        $this->serializer = $serializer;
+        $this->userRepository = $userRepository;
+        $this->entityManager =$entityManager;
+    }
+
     /**
      * @Route("api/users/create", name="user_create", methods={"POST"})
      * @param Request $request
      * @param EncoderFactoryInterface $encoder
-     * @param EntityManagerInterface $em
      * @param ClientRepository $clientRepository
      * @param ValidatorInterface $validator
-     * @param SerializerInterface $serializer
      * @return Response
      */
     public function create(
         Request $request,
         EncoderFactoryInterface $encoder,
-        EntityManagerInterface $em,
         ClientRepository $clientRepository,
-        ValidatorInterface $validator,
-        SerializerInterface $serializer): Response
+        ValidatorInterface $validator): Response
     {
         $data = $request->getContent();
-        $user = $serializer->deserialize($data, User::class, 'json');
+        $user = $this->serializer->deserialize($data, User::class, 'json');
         $violations = $validator->validate($user);
 
         $donnees = json_decode($request->getContent(), true);
@@ -56,7 +70,7 @@ class UserController extends AbstractController
         }
 
         if(count($violations) > 0) {
-            return new Response($serializer->serialize($violations, 'json'), 400, ['Content-Type' => 'application/json']);
+            return new Response($this->serializer->serialize($violations, 'json'), 400, ['Content-Type' => 'application/json']);
         }
 
         $user->setRoles(['ROLE_USER']);
@@ -67,30 +81,50 @@ class UserController extends AbstractController
         $user->setPassword($hash);
         $user->setClient($clientRepository->find(1));
 
-        $em->persist($user);
-        $em->flush();
+        $this->entityManager->persist($user);
+        $this->entityManager->flush();
 
         return new JsonResponse('L\'user a bien été crée !', 201);
     }
 
     /**
      * @Route("api/users", name="users_list", methods={"GET"})
-     * @param UserRepository $userRepository
      * @return JsonResponse
      */
-    public function list(UserRepository $userRepository) : JsonResponse
+    public function list() : JsonResponse
     {
-        return $this->json($userRepository->findAll(), 200,[], ['groups' => ['user']]);
+        return $this->json($this->userRepository->findAll(), 200,[], ['groups' => ['user']]);
     }
 
     /**
      * @Route("api/users/{id}",name="users_show", methods={"GET"})
+     * @param $id
+     * @return JsonResponse
+     */
+    public function show($id) : JsonResponse
+    {
+        return $this->json($this->userRepository->find($id), 200, [], ['groups' => ['user']]);
+    }
+
+    /**
+     * @Route("api/users/{id}", name="users_update", methods={"PUT"})
+     */
+    public function update()
+    {
+
+    }
+
+    /**
+     * @Route("api/users/{id}", name="users_delete", methods={"DELETE"})
      * @param UserRepository $userRepository
      * @param $id
      * @return JsonResponse
      */
-    public function show(UserRepository $userRepository, $id) : JsonResponse
+    public function delete(UserRepository $userRepository, $id) : JsonResponse
     {
-        return $this->json($userRepository->find($id), 200, [], ['groups' => ['user']]);
+        $this->entityManager->remove($userRepository->find($id));
+        $this->entityManager->flush();
+
+        return new JsonResponse('L\'user a bien été supprimé !', 201);
     }
 }

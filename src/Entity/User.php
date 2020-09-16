@@ -19,6 +19,7 @@ class User implements UserInterface
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
+     * @Groups({"user"})
      */
     private $id;
 
@@ -43,12 +44,6 @@ class User implements UserInterface
     private $password;
 
     /**
-     * @ORM\ManyToOne(targetEntity=Client::class, inversedBy="users")
-     * @Groups({"user"})
-     */
-    private $client;
-
-    /**
      * @ORM\Column(type="string", length=10)
      * @Assert\NotBlank()
      * @Groups({"user"})
@@ -60,7 +55,14 @@ class User implements UserInterface
      * @Assert\NotBlank()
      * @Groups({"user"})
      */
+
     private $lastName;
+    /**
+     * @ORM\ManyToOne(targetEntity=Client::class, inversedBy="users")
+     * @Groups({"user"})
+     */
+
+    private $client;
 
     /**
      * @ORM\Column(type="datetime_immutable")
@@ -98,6 +100,31 @@ class User implements UserInterface
 
         return $this;
     }
+
+    public function getFirstName(): ?string
+    {
+        return $this->firstName;
+    }
+
+    public function setFirstName(string $firstName): self
+    {
+        $this->firstName = $firstName;
+
+        return $this;
+    }
+
+    public function getLastName(): ?string
+    {
+        return $this->lastName;
+    }
+
+    public function setLastName(string $lastName): self
+    {
+        $this->lastName = $lastName;
+
+        return $this;
+    }
+
 
     /**
      * A visual identifier that represents this user.
@@ -168,30 +195,6 @@ class User implements UserInterface
     public function setClient(?Client $client): self
     {
         $this->client = $client;
-
-        return $this;
-    }
-
-    public function getFirstName(): ?string
-    {
-        return $this->firstName;
-    }
-
-    public function setFirstName(string $firstName): self
-    {
-        $this->firstName = $firstName;
-
-        return $this;
-    }
-
-    public function getLastName(): ?string
-    {
-        return $this->lastName;
-    }
-
-    public function setLastName(string $lastName): self
-    {
-        $this->lastName = $lastName;
 
         return $this;
     }
