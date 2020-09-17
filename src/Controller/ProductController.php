@@ -18,15 +18,16 @@ class ProductController extends AbstractController
     use PagerTrait;
 
     /**
-     * @Route("/api/products", name="products_list", methods={"GET"})
+     * @Route("/api/products/page/{page}", name="products_list", methods={"GET"})
      *
      * @param ProductRepository $productRepository
      * @param Request $request
+     * @param $page
      * @return JsonResponse
      */
-    public function list(ProductRepository $productRepository, Request $request): JsonResponse
+    public function list(ProductRepository $productRepository, Request $request, $page = 1): JsonResponse
     {
-        $page = $request->query->get('page', 1);
+        //$page = $request->query->get('page', 1);
         $adapter = new QueryAdapter($productRepository->findAllProducts(), false);
         $pager = new Pagerfanta($adapter);
         $pager->setMaxPerPage(2);
