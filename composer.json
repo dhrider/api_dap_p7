@@ -14,6 +14,7 @@
         "doctrine/orm": "^2.7",
         "jms/serializer-bundle": "^3.7",
         "lexik/jwt-authentication-bundle": "^2.8",
+        "nelmio/api-doc-bundle": "^3.7",
         "pagerfanta/pagerfanta": "^2.4",
         "phpdocumentor/reflection-docblock": "^5.2",
         "symfony/console": "5.1.*",
