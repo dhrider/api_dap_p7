@@ -27,7 +27,6 @@ class ProductController extends AbstractController
      */
     public function list(ProductRepository $productRepository, Request $request, $page = 1): JsonResponse
     {
-        //$page = $request->query->get('page', 1);
         $adapter = new QueryAdapter($productRepository->findAllProducts(), false);
         $pager = new Pagerfanta($adapter);
         $pager->setMaxPerPage(2);
