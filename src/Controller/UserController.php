@@ -8,6 +8,7 @@ use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use JMS\Serializer\Exception\NotAcceptableException;
 use JMS\Serializer\SerializerInterface;
+use Swagger\Annotations as SWG;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -38,6 +39,11 @@ class UserController extends AbstractController
 
     /**
      * @Route("api/users/create", name="user_create", methods={"POST"})
+     *  @SWG\Response(
+     *      response=200,
+     *      description="Success"
+     *  )
+     * @SWG\Tag(name="users")
      * @param Request $request
      * @param EncoderFactoryInterface $encoder
      * @param ClientRepository $clientRepository
@@ -89,6 +95,11 @@ class UserController extends AbstractController
 
     /**
      * @Route("api/users", name="users_list", methods={"GET"})
+     *  @SWG\Response(
+     *      response=200,
+     *      description="Success"
+     *  )
+     * @SWG\Tag(name="users")
      * @return JsonResponse
      */
     public function list() : JsonResponse
@@ -98,6 +109,11 @@ class UserController extends AbstractController
 
     /**
      * @Route("api/users/{id}",name="users_show", methods={"GET"})
+     *  @SWG\Response(
+     *      response=200,
+     *      description="Success"
+     *  )
+     * @SWG\Tag(name="users")
      * @param $id
      * @return JsonResponse
      */
@@ -113,6 +129,11 @@ class UserController extends AbstractController
 
     /**
      * @Route("api/users/{id}", name="users_delete", methods={"DELETE"})
+     *  @SWG\Response(
+     *      response=200,
+     *      description="Success"
+     *  )
+     * @SWG\Tag(name="users")
      * @param UserRepository $userRepository
      * @param $id
      * @return JsonResponse

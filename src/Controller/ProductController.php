@@ -8,6 +8,8 @@ use JMS\Serializer\SerializerInterface;
 use Pagerfanta\Doctrine\ORM\QueryAdapter;
 use Pagerfanta\Exception\OutOfRangeCurrentPageException;
 use Pagerfanta\Pagerfanta;
+use Swagger\Annotations as SWG;
+use Nelmio\ApiDocBundle\Annotation\Model;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -19,7 +21,11 @@ class ProductController extends AbstractController
 
     /**
      * @Route("/api/products/page/{page}", name="products_list", methods={"GET"})
-     *
+     *  @SWG\Response(
+     *      response=200,
+     *      description="Success"
+     *  )
+     * @SWG\Tag(name="products")
      * @param ProductRepository $productRepository
      * @param Request $request
      * @param $page
@@ -42,7 +48,17 @@ class ProductController extends AbstractController
 
     /**
      * @Route("/api/products/{id}", name="products_show", methods={"GET"})
-     *
+     * @SWG\Parameter(
+     *      name="product details",
+     *      in="query",
+     *      description="Id of the product",
+     *      type="integer",
+     *  ),
+     *  @SWG\Response(
+     *      response=200,
+     *      description="Success"
+     *  )
+     * @SWG\Tag(name="products")
      * @param ProductRepository $productRepository
      * @param $id
      * @param SerializerInterface $serializer
