@@ -21,10 +21,21 @@ class ProductController extends AbstractController
 
     /**
      * @Route("/api/products/page/{page}", name="products_list", methods={"GET"})
-     *  @SWG\Response(
-     *      response=200,
-     *      description="Success"
-     *  )
+     * @SWG\Parameter(
+     *     name="page",
+     *     in="path",
+     *     type="integer",
+     *     required=true,
+     *     description="list the produtcs at the given page number"
+     * )
+     * @SWG\Response(
+     *     response=200,
+     *     description="Return list of paginated products"
+     * )
+     * @SWG\Response(
+     *     response=404,
+     *     description="Product page does not exist"
+     * )
      * @SWG\Tag(name="products")
      * @param ProductRepository $productRepository
      * @param Request $request
@@ -49,15 +60,20 @@ class ProductController extends AbstractController
     /**
      * @Route("/api/products/{id}", name="products_show", methods={"GET"})
      * @SWG\Parameter(
-     *      name="product details",
-     *      in="query",
-     *      description="Id of the product",
-     *      type="integer",
-     *  ),
-     *  @SWG\Response(
-     *      response=200,
-     *      description="Success"
-     *  )
+     *     name="id",
+     *     in="path",
+     *     type="integer",
+     *     required=true,
+     *     description="Detial of the product with his given unique id"
+     * )
+     * @SWG\Response(
+     *     response=200,
+     *     description="Return the detail of the product"
+     * )
+     * @SWG\Response(
+     *     response=404,
+     *     description="Product does not exist"
+     * )
      * @SWG\Tag(name="products")
      * @param ProductRepository $productRepository
      * @param $id
