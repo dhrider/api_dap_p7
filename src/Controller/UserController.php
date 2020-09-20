@@ -13,8 +13,10 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Encoder\EncoderFactoryInterface;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Component\Validator\ConstraintViolation;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
@@ -104,7 +106,12 @@ class UserController extends AbstractController
      */
     public function list() : JsonResponse
     {
-        return $this->json($this->userRepository->findAll(), 200,[], ['groups' => ['user']]);
+        try {
+            return $this->json($this->userRepository->findAll(), 200,[], ['groups' => ['user']]);
+        } catch (AccessDeniedException  $exception) {
+            return new JsonResponse('Vous n\'avez pas l\'autorisation nécessaire pour accéder à ces ressources !', 403);
+        }
+
     }
 
     /**
@@ -119,6 +126,7 @@ class UserController extends AbstractController
      */
     public function show($id) : JsonResponse
     {
+
         try {
             $json = $this->serializer->serialize($this->userRepository->find($id), 'json');
             return New JsonResponse($json, 200, ['Content-Type' => 'application/json'], true);

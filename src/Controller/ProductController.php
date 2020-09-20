@@ -72,7 +72,7 @@ class ProductController extends AbstractController
      * )
      * @SWG\Response(
      *     response=404,
-     *     description="Product does not exist"
+     *     description="Productgit statu does not exist"
      * )
      * @SWG\Tag(name="products")
      * @param ProductRepository $productRepository
