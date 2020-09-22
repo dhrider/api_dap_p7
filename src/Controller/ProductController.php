@@ -13,6 +13,7 @@ use Nelmio\ApiDocBundle\Annotation\Model;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 
 class ProductController extends AbstractController
@@ -20,7 +21,7 @@ class ProductController extends AbstractController
     use PagerTrait;
 
     /**
-     * @Route("/api/products/page/{page}", name="products_list", methods={"GET"})
+     * @Route("/api/products", name="products_list", methods={"GET"})
      * @SWG\Parameter(
      *     name="page",
      *     in="path",
@@ -39,11 +40,11 @@ class ProductController extends AbstractController
      * @SWG\Tag(name="products")
      * @param ProductRepository $productRepository
      * @param Request $request
-     * @param $page
      * @return JsonResponse
      */
-    public function list(ProductRepository $productRepository, Request $request, $page = 1): JsonResponse
+    public function list(ProductRepository $productRepository, Request $request): JsonResponse
     {
+        $page = $request->query->getInt("page", 1);
         $adapter = new QueryAdapter($productRepository->findAllProducts(), false);
         $pager = new Pagerfanta($adapter);
         $pager->setMaxPerPage(2);
@@ -64,7 +65,7 @@ class ProductController extends AbstractController
      *     in="path",
      *     type="integer",
      *     required=true,
-     *     description="Detial of the product with his given unique id"
+     *     description="Detail of the product with his given unique id"
      * )
      * @SWG\Response(
      *     response=200,
@@ -72,7 +73,7 @@ class ProductController extends AbstractController
      * )
      * @SWG\Response(
      *     response=404,
-     *     description="Productgit statu does not exist"
+     *     description="Product does not exist"
      * )
      * @SWG\Tag(name="products")
      * @param ProductRepository $productRepository

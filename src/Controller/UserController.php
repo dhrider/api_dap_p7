@@ -13,10 +13,8 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Encoder\EncoderFactoryInterface;
-use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Component\Validator\ConstraintViolation;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
@@ -43,7 +41,7 @@ class UserController extends AbstractController
      * @Route("api/users/create", name="user_create", methods={"POST"})
      *  @SWG\Response(
      *      response=200,
-     *      description="Success"
+     *      description="User successfully created"
      *  )
      * @SWG\Tag(name="users")
      * @param Request $request
@@ -99,34 +97,43 @@ class UserController extends AbstractController
      * @Route("api/users", name="users_list", methods={"GET"})
      *  @SWG\Response(
      *      response=200,
-     *      description="Success"
+     *      description="Return the list of users"
      *  )
+     * @SWG\Response(
+     *     response=403,
+     *     description="Access denied ! You don't have the authorisation to access this ressource"
+     * )
      * @SWG\Tag(name="users")
      * @return JsonResponse
      */
     public function list() : JsonResponse
     {
-        try {
-            return $this->json($this->userRepository->findAll(), 200,[], ['groups' => ['user']]);
-        } catch (AccessDeniedException  $exception) {
-            return new JsonResponse('Vous n\'avez pas l\'autorisation nécessaire pour accéder à ces ressources !', 403);
-        }
-
+        return $this->json($this->userRepository->findAll(), 200,[], ['groups' => ['user']]);
     }
 
     /**
      * @Route("api/users/{id}",name="users_show", methods={"GET"})
+     * @SWG\Parameter(
+     *     name="id",
+     *     in="path",
+     *     type="integer",
+     *     required=true,
+     *     description="Detail of the user with his given unique id"
+     * )
      *  @SWG\Response(
      *      response=200,
-     *      description="Success"
+     *      description="Return the detail of the user"
      *  )
+     * @SWG\Response(
+     *     response=404,
+     *     description="User does not exist"
+     * )
      * @SWG\Tag(name="users")
      * @param $id
      * @return JsonResponse
      */
     public function show($id) : JsonResponse
     {
-
         try {
             $json = $this->serializer->serialize($this->userRepository->find($id), 'json');
             return New JsonResponse($json, 200, ['Content-Type' => 'application/json'], true);
@@ -137,11 +144,23 @@ class UserController extends AbstractController
 
     /**
      * @Route("api/users/{id}", name="users_delete", methods={"DELETE"})
-     *  @SWG\Response(
+     * @SWG\Parameter(
+     *     name="id",
+     *     in="path",
+     *     type="integer",
+     *     required=true,
+     *     description="Delete the user with his given unique id"
+     * )
+     * @SWG\Response(
      *      response=200,
-     *      description="Success"
-     *  )
+     *      description="User successfully deleted"
+     * )
+     * @SWG\Response(
+     *     response=404,
+     *     description="User does not exist"
+     * )
      * @SWG\Tag(name="users")
+     * @return JsonResponse
      * @param UserRepository $userRepository
      * @param $id
      * @return JsonResponse
