@@ -43,6 +43,10 @@ class UserController extends AbstractController
      *      response=200,
      *      description="User successfully created"
      *  )
+     *  @SWG\Response(
+     *      response=400,
+     *      description="Validation errors"
+     *  )
      * @SWG\Tag(name="users")
      * @param Request $request
      * @param EncoderFactoryInterface $encoder
@@ -101,7 +105,7 @@ class UserController extends AbstractController
      *  )
      * @SWG\Response(
      *     response=403,
-     *     description="Access denied ! You don't have the authorisation to access this ressource"
+     *     description="Access denied !"
      * )
      * @SWG\Tag(name="users")
      * @return JsonResponse
@@ -173,7 +177,7 @@ class UserController extends AbstractController
             $this->entityManager->remove($user);
             $this->entityManager->flush();
 
-            return new JsonResponse('L\'user a bien été supprimé !', 201);
+            return new JsonResponse('L\'user a bien été supprimé !', 200);
         } else {
             return new JsonResponse('L\'user n\'existe pas !', 404);
         }

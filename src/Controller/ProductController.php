@@ -24,7 +24,7 @@ class ProductController extends AbstractController
      * @Route("/api/products", name="products_list", methods={"GET"})
      * @SWG\Parameter(
      *     name="page",
-     *     in="path",
+     *     in="query",
      *     type="integer",
      *     required=true,
      *     description="list the produtcs at the given page number"
