@@ -11,9 +11,8 @@ trait PagerTrait
     {
         return $this->json(['data' => $data, 'meta' => [
             'limit' => $data->getMaxPerPage(),
-            'current_items' => count($data->getCurrentPageResults()),
             'total_items' => $data->getNbResults(),
-            'offset' => $data->getCurrentPageOffsetStart(),
+            'page_number' => $data->getCurrentPage(),
             ],
         ]);
     }
